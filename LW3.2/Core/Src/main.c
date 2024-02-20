@@ -257,21 +257,20 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  osEvent event = osMessageGet(myQueue01Handle, 10);
-	  if (event.value.v == 1)
-	  {
-		  for(int i = 0; i < 8; i++)
-		  {
-			  HAL_Delay(200);
-			  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0<<i, GPIO_PIN_SET);
-			  HAL_Delay(200);
-			  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0<<i, GPIO_PIN_RESET);
-		  }
-	  }
-	  else if (event.value.v == 0)
-	  {
-		  HAL_GPIO_WritePin(GPIOE, (uint16_t)0x00ff, GPIO_PIN_RESET);
-	  }
+		osEvent event = osMessageGet(myQueue01Handle, 10);
+		if (event.value.v == 1)
+		{
+			for(int i = 0; i < 8; i++)
+			{
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
+				HAL_Delay(125);
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
+			}
+		}
+		else if (event.value.v == 0)
+		{
+			HAL_GPIO_WritePin(GPIOE, (uint16_t)0x00ff, GPIO_PIN_RESET);
+		}
   }
   /* USER CODE END 5 */
 }
@@ -290,19 +289,19 @@ void StartTask02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0)
-	{
-		while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
-		count = (count + 1) % 2;
-		if (count == 0)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0)
 		{
-			osMessagePut (myQueue01Handle, 0, 10);
+			while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
+			count = (count + 1) % 2;
+			if (count == 0)
+			{
+				osMessagePut (myQueue01Handle, 0, 10);
+			}
+			else if (count == 1)
+			{
+				osMessagePut (myQueue01Handle, 1, 10);
+			}
 		}
-		else if (count == 1)
-		{
-			osMessagePut (myQueue01Handle, 1, 10);
-		}
-	}
   }
   /* USER CODE END StartTask02 */
 }
