@@ -42,9 +42,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId myTask02Handle;
-osThreadId myTask03Handle;
-osThreadId myTask04Handle;
+osThreadId buttonTaskAHandle;
+osThreadId buttonTaskBHandle;
+osThreadId buttonTaskCHandle;
 osMessageQId myQueue01Handle;
 /* USER CODE BEGIN PV */
 
@@ -54,9 +54,9 @@ osMessageQId myQueue01Handle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
-void StartTask03(void const * argument);
-void StartTask04(void const * argument);
+void StartButtonTaskA(void const * argument);
+void StartButtonTaskB(void const * argument);
+void StartButtonTaskC(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -125,17 +125,17 @@ int main(void)
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of myTask02 */
-  osThreadDef(myTask02, StartTask02, osPriorityNormal, 0, 128);
-  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
+  /* definition and creation of buttonTaskA */
+  osThreadDef(buttonTaskA, StartButtonTaskA, osPriorityNormal, 0, 128);
+  buttonTaskAHandle = osThreadCreate(osThread(buttonTaskA), NULL);
 
-  /* definition and creation of myTask03 */
-  osThreadDef(myTask03, StartTask03, osPriorityNormal, 0, 128);
-  myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
+  /* definition and creation of buttonTaskB */
+  osThreadDef(buttonTaskB, StartButtonTaskB, osPriorityNormal, 0, 128);
+  buttonTaskBHandle = osThreadCreate(osThread(buttonTaskB), NULL);
 
-  /* definition and creation of myTask04 */
-  osThreadDef(myTask04, StartTask04, osPriorityNormal, 0, 128);
-  myTask04Handle = osThreadCreate(osThread(myTask04), NULL);
+  /* definition and creation of buttonTaskC */
+  osThreadDef(buttonTaskC, StartButtonTaskC, osPriorityNormal, 0, 128);
+  buttonTaskCHandle = osThreadCreate(osThread(buttonTaskC), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -250,6 +250,7 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
+int ledDelay = 100;
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
@@ -262,7 +263,7 @@ void StartDefaultTask(void const * argument)
     if (event.value.v == 1) {
       for (int i = 0; i < 8; i++) {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
-        HAL_Delay(125);
+        HAL_Delay(ledDelay);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
       }
     } else if (event.value.v == 0) {
@@ -272,19 +273,18 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartTask02 */
+/* USER CODE BEGIN Header_StartButtonTaskA */
 /**
-* @brief Function implementing the myTask02 thread.
+* @brief Function implementing the buttonTaskA thread.
 * @param argument: Not used
 * @retval None
 */
-int count = 0;
-/* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
+/* USER CODE END Header_StartButtonTaskA */
+void StartButtonTaskA(void const * argument)
 {
-  /* USER CODE BEGIN StartTask02 */
+  /* USER CODE BEGIN StartButtonTaskA */
   /* Infinite loop */
-  for (;;)
+  for(;;)
   {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0) {
       while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
@@ -298,43 +298,53 @@ void StartTask02(void const * argument)
       }
     }
   }
-  /* USER CODE END StartTask02 */
+  /* USER CODE END StartButtonTaskA */
 }
 
-/* USER CODE BEGIN Header_StartTask03 */
+/* USER CODE BEGIN Header_StartButtonTaskB */
 /**
-* @brief Function implementing the myTask03 thread.
+* @brief Function implementing the buttonTaskB thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask03 */
-void StartTask03(void const * argument)
+/* USER CODE END Header_StartButtonTaskB */
+void StartButtonTaskB(void const * argument)
 {
-  /* USER CODE BEGIN StartTask03 */
+  /* USER CODE BEGIN StartButtonTaskB */
   /* Infinite loop */
   for(;;)
   {
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 0) {
+      while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 0);
 
+      if (ledDelay > 25) {
+        ledDelay -= 25;
+      }
+    }
   }
-  /* USER CODE END StartTask03 */
+  /* USER CODE END StartButtonTaskB */
 }
 
-/* USER CODE BEGIN Header_StartTask04 */
+/* USER CODE BEGIN Header_StartButtonTaskC */
 /**
-* @brief Function implementing the myTask04 thread.
+* @brief Function implementing the buttonTaskC thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask04 */
-void StartTask04(void const * argument)
+/* USER CODE END Header_StartButtonTaskC */
+void StartButtonTaskC(void const * argument)
 {
-  /* USER CODE BEGIN StartTask04 */
+  /* USER CODE BEGIN StartButtonTaskC */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 0) {
+      while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 0);
+
+      ledDelay += 25;
+    }
   }
-  /* USER CODE END StartTask04 */
+  /* USER CODE END StartButtonTaskC */
 }
 
 /**
