@@ -222,29 +222,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-uint16_t pins1[] =
-{
-  GPIO_PIN_0,
-  GPIO_PIN_1,
-  GPIO_PIN_2,
-  GPIO_PIN_3,
-  GPIO_PIN_4,
-  GPIO_PIN_5,
-  GPIO_PIN_6,
-  GPIO_PIN_7,
-};
-
-uint16_t pins2[] =
-{
-  GPIO_PIN_8,
-  GPIO_PIN_9,
-  GPIO_PIN_10,
-  GPIO_PIN_11,
-  GPIO_PIN_12,
-  GPIO_PIN_13,
-  GPIO_PIN_14,
-  GPIO_PIN_15,
-};
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -262,9 +239,9 @@ void StartDefaultTask(void const * argument)
   {
     for(int i = 0; i < 8; i++)
     {
-			HAL_GPIO_WritePin(GPIOE, pins1[i], GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
 			HAL_Delay(500);
-			HAL_GPIO_WritePin(GPIOE, pins1[i], GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
     }
   }
   /* USER CODE END 5 */
@@ -285,9 +262,9 @@ void StartTask02(void const * argument)
   {
     for(int i = 0; i < 8; i++)
     {
-			HAL_GPIO_WritePin(GPIOE, pins2[i], GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
 			HAL_Delay(250);
-			HAL_GPIO_WritePin(GPIOE, pins2[i], GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
 		}
   }
   /* USER CODE END StartTask02 */
