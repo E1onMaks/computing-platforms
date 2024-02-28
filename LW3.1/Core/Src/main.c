@@ -269,19 +269,19 @@ void StartTask02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-  	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0)
-  	{
-  		while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
-  		count = (count + 1) % 2;
-  		if(count == 0)
-  		{
-  			osMessagePut(myQueue01Handle, 1, 10);
-  		}
-  		else if(count == 1)
-  		{
-  			osMessagePut(myQueue01Handle, 2, 10);
-  		}
-  	}
+    if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0)
+    {
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
+      count = (count + 1) % 2;
+      if(count == 0)
+      {
+        osMessagePut(myQueue01Handle, 1, 10);
+      }
+      else if(count == 1)
+      {
+        osMessagePut(myQueue01Handle, 2, 10);
+      }
+    }
   }
   /* USER CODE END StartTask02 */
 }
