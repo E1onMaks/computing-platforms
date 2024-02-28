@@ -261,11 +261,11 @@ void StartDefaultTask(void const * argument)
 * @param argument: Not used
 * @retval None
 */
-int count = 0;
 /* USER CODE END Header_StartTask02 */
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
+  int count = 0;
   /* Infinite loop */
   for(;;)
   {
