@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "stdbool.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -52,11 +53,16 @@ osMessageQId myQueue01Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+
 static void MX_GPIO_Init(void);
-void StartDefaultTask(void const * argument);
-void StartButtonTaskA(void const * argument);
-void StartButtonTaskB(void const * argument);
-void StartButtonTaskC(void const * argument);
+
+void StartDefaultTask(void const *argument);
+
+void StartButtonTaskA(void const *argument);
+
+void StartButtonTaskB(void const *argument);
+
+void StartButtonTaskC(void const *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -71,8 +77,7 @@ void StartButtonTaskC(void const * argument);
   * @brief  The application entry point.
   * @retval int
   */
-int main(void)
-{
+int main(void) {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -147,8 +152,7 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -160,8 +164,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
-{
+void SystemClock_Config(void) {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -182,22 +185,20 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                                | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK) {
     Error_Handler();
   }
 }
@@ -207,8 +208,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_GPIO_Init(void)
-{
+static void MX_GPIO_Init(void) {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 /* USER CODE BEGIN MX_GPIO_Init_1 */
 /* USER CODE END MX_GPIO_Init_1 */
@@ -218,20 +218,20 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
-                          |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5
+                           | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_0 | GPIO_PIN_1, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PE2 PE3 PE4 PE5
                            PE6 PE7 PE0 PE1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
-                          |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_0|GPIO_PIN_1;
+  GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5
+                        | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_0 | GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB12 PB13 PB14 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14;
+  GPIO_InitStruct.Pin = GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -250,25 +250,35 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
-int ledDelay = 100;
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
-{
+void StartDefaultTask(void const *argument) {
   /* USER CODE BEGIN 5 */
+  bool flag = 0;
+  uint32_t ledDelay = 100;
+  uint8_t i = 0;
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     osEvent event = osMessageGet(myQueue01Handle, 10);
-    
-    if (event.value.v == 1) {
-      for (int i = 0; i < 8; i++) {
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
-        HAL_Delay(ledDelay);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
+
+    if (event.status == osEventMessage) {
+      if (event.value.v == 0) {
+        flag = 0;
+      } else if (event.value.v == 1) {
+        flag = 1;
+      } else if (event.value.v == 2 && ledDelay > 25) {
+        ledDelay -= 25;
+      } else if (event.value.v == 3) {
+        ledDelay += 25;
       }
-    } else if (event.value.v == 0) {
-      HAL_GPIO_WritePin(GPIOE, (uint16_t)0x00ff, GPIO_PIN_RESET);
     }
+
+    if (flag == 1) {
+      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_SET);
+      HAL_Delay(ledDelay);
+      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0 << i, GPIO_PIN_RESET);
+      if (i < 7) i++;
+      else i = 0;
+    } else HAL_GPIO_WritePin(GPIOE, (uint16_t) 0x00ff, GPIO_PIN_RESET);
   }
   /* USER CODE END 5 */
 }
@@ -280,21 +290,20 @@ void StartDefaultTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartButtonTaskA */
-void StartButtonTaskA(void const * argument)
-{
+void StartButtonTaskA(void const *argument) {
   /* USER CODE BEGIN StartButtonTaskA */
+  uint8_t count = 0;
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0) {
       while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0);
 
       count = (count + 1) % 2;
 
       if (count == 0) {
-        osMessagePut (myQueue01Handle, 0, 10);
+        osMessagePut(myQueue01Handle, 0, 10);
       } else if (count == 1) {
-        osMessagePut (myQueue01Handle, 1, 10);
+        osMessagePut(myQueue01Handle, 1, 10);
       }
     }
   }
@@ -308,18 +317,14 @@ void StartButtonTaskA(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartButtonTaskB */
-void StartButtonTaskB(void const * argument)
-{
+void StartButtonTaskB(void const *argument) {
   /* USER CODE BEGIN StartButtonTaskB */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 0) {
       while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 0);
 
-      if (ledDelay > 25) {
-        ledDelay -= 25;
-      }
+      osMessagePut(myQueue01Handle, 2, 10);
     }
   }
   /* USER CODE END StartButtonTaskB */
@@ -332,16 +337,14 @@ void StartButtonTaskB(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartButtonTaskC */
-void StartButtonTaskC(void const * argument)
-{
+void StartButtonTaskC(void const *argument) {
   /* USER CODE BEGIN StartButtonTaskC */
   /* Infinite loop */
-  for(;;)
-  {
+  for (;;) {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 0) {
       while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 0);
 
-      ledDelay += 25;
+      osMessagePut(myQueue01Handle, 3, 10);
     }
   }
   /* USER CODE END StartButtonTaskC */
@@ -355,8 +358,7 @@ void StartButtonTaskC(void const * argument)
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
@@ -372,13 +374,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-void Error_Handler(void)
-{
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1)
-  {
+  while (1) {
   }
   /* USER CODE END Error_Handler_Debug */
 }
