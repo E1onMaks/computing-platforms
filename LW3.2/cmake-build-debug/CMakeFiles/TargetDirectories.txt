@@ -1,0 +1,3 @@
+D:/University/Computing platforms/workspace/LW3.2/cmake-build-debug/CMakeFiles/LW3.2.elf.dir
+D:/University/Computing platforms/workspace/LW3.2/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/University/Computing platforms/workspace/LW3.2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
